@@ -81,7 +81,7 @@ export const SettingsPanel = () => {
     };
 
     try {
-      const response = await fetch("https://romirotem.onrender.com", {
+      const response = await fetch("https://romirotem.onrender.com/predict", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

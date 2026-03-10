@@ -4,6 +4,7 @@ import pandas as pd
 import joblib
 from catboost import CatBoostClassifier
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 app = FastAPI()
 app.add_middleware(
@@ -15,11 +16,9 @@ app.add_middleware(
 )
 
 
-path = r'C:\Projects\Statbotics\RomiRotem\data\datasets\X.csv'
-X = pd.read_csv(path)
+X = pd.read_csv('X.csv')
 
-path1 = r'C:\Projects\Statbotics\RomiRotem\full_project\code\summery_df.csv'
-sdf = pd.read_csv(path1)
+sdf = pd.read_csv('summery_df.csv')
 sdf['endGame'] = sdf['endGame'].map({'Nothiing': 0, 'Parked': 1, 'ShallowCage': 2, 'DeepCage': 3})
 sdf['endGame'] = sdf['endGame'].fillna(0)
 sdf['team_number'] = sdf['team_number'].astype(str).str.extract(r'(\d+)').astype(int)
@@ -28,10 +27,10 @@ sdf = sdf.groupby(level=0).mean(numeric_only=True)
 sdf.index.name = None
 sdf = sdf.sort_index()
 
+pipeline = joblib.load("LR_model.pkl")
 
-pipeline = joblib.load(r"C:\Projects\Statbotics\RomiRotem\full_project\code\LR_model.pkl")
 cat_model = CatBoostClassifier()
-cat_model.load_model(r"C:\Projects\Statbotics\RomiRotem\full_project\code\catboost_model.cbm")
+cat_model.load_model("catboost_model.cbm")
 
 
 class MatchRequest(BaseModel):
